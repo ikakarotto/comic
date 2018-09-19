@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Description: 下载最新的海贼王漫画章节
 
 import urllib2
 import ssl
@@ -24,4 +25,9 @@ for i in range(len):
         print '#### Name Error ####', comic_url
 #    print urls_list[i].attrs['src']
 
+'''
+环境：
+	python2.7
+	bs4
+'''
 
