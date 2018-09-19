@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Description: 下载最新的海贼王漫画章节
+# Description: 获取海贼王漫画章节
 
 import urllib2
 import ssl
