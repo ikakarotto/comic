@@ -32,13 +32,13 @@ comic = comic_name.replace(' ','')
 
 # 下载漫画图片
 index = 1
-if not os.path.isdir(comic): os.makedirs(comic)
+if not os.path.isdir('../' + comic): os.makedirs('../' + comic)
 for image in images_list:
     image_url = image.attrs['src']
     request = urllib2.Request(image_url, headers = headers)
     response = urllib2.urlopen(request, context = context).read()
     print('正在下载 ' + comic + str(index) + '.jpg')
-    with open(comic + '/' + comic + str(index) + '.jpg', 'wb') as f:
+    with open('../' + comic + '/' + comic + str(index) + '.jpg', 'wb') as f:
         f.write(response)
     f.close()
     index += 1
