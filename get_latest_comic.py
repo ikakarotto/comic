@@ -6,6 +6,15 @@ import re
 import time
 import os
 from random import choice
+from urllib.parse import urlparse
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+import urllib3
+urllib3.disable_warnings()
+'''
+import logging
+logging.captureWarnings(True)
+'''
 
 def getRandomUserAgent():
     agents = [
@@ -25,7 +34,7 @@ def getRandomUserAgent():
     return choice(agents)   
 
 def getTitle(url, headers):
-    response = requests.get(url, headers = headers)
+    response = requests.get(url, headers = headers, verify =False)
     response.encoding = 'gbk'
     html = response.text
     reTitleObj = re.search(r"class='txtA'>(.*?) \| ", html)
@@ -35,7 +44,7 @@ def getTitle(url, headers):
 
 def downloadFile(url, localfile):
     try:
-        r = requests.get(url, headers = headers, timeout=(3,7)) 
+        r = requests.get(url, headers = headers, verify =False, timeout=(3,7)) 
         with open(localfile, "wb") as f:
             time.sleep(choice(range(500,3500))/1000)
             f.write(r.content)
@@ -43,7 +52,7 @@ def downloadFile(url, localfile):
         print(err)
 
 def getImages(url, headers, imgindex):
-    response = requests.get(url, headers = headers)
+    response = requests.get(url, headers = headers, verify =False)
     #response.encoding = 'utf-8'
     response.encoding = 'gbk'
     html = response.text
@@ -74,15 +83,18 @@ def getChapterComic(uri):
     getImages(url, headers, imgindex)
     os.chdir(cwd)
 
-site = 'https://wap.kukudm.com'
-imgsite = 'https://tu.kukudm.com/'
+# site = 'https://wap.kukudm.com'
+# imgsite = 'https://tu.kukudm.com/'
+
+site = 'http://1pc570gfrd9z.ihhmh.com'
+imgsite = 'http://tu.ihhmh.com/'
+
 headers ={ 'User-Agent': getRandomUserAgent() }
 cwd = os.path.split(os.path.realpath(__file__))[0]
 
 if __name__ == '__main__':
-    #uri = '/comiclist/4/66397/1.htm'
     #uri = '/comiclist/4/88248/1.htm'
-    uri = ''
+    #uri = '/comiclist/4/97606/1.htm'
     getChapterComic(uri)
 
 

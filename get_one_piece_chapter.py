@@ -7,7 +7,10 @@ import sys
 import time
 from bs4 import BeautifulSoup
 from random import choice
+from urllib.parse import urlparse
 import get_latest_comic
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # 随机获取UserAgent
 def getRandomUserAgent():
@@ -27,8 +30,8 @@ def getRandomUserAgent():
 
     return choice(agents)   
 
-def getChapterLists(url,headers,downloadflag):
-    response = requests.get(url, headers = headers)
+def getChapterLists(url,headers,chapter_cout,downloadflag):
+    response = requests.get(url, headers = headers, verify =False)
     response.encoding = 'gbk'
     html = response.text
     bsObj = BeautifulSoup(html, 'lxml')
@@ -39,23 +42,39 @@ def getChapterLists(url,headers,downloadflag):
     for ObjChapter in listObjChapter:
         chaptername = re.sub(r'\[|\]| ', '', ObjChapter.text)
         chapterhref = ObjChapter.attrs['href']
-        print(chapterhref, chaptername, sep="\t")
+        uri = urlparse(chapterhref).path
+        print(site + uri, chaptername, sep="\t")
         if downloadflag == 1:
-            get_latest_comic.getChapterComic(chapterhref)
+            time.sleep(choice(range(500,3500))/1000)
+            get_latest_comic.getChapterComic(uri)
         index += 1
-        if index >= 90: break
+        # 定义查看最近多少话漫画
+        if index > chapter_cout: break
 
 if __name__ == '__main__':
+    '''
     site = 'https://wap.kukudm.com'
     imgsite = 'https://tu.kukudm.com/'
     headers ={ 'User-Agent': getRandomUserAgent() }
-    # url = 'http://127.0.0.1/op.html'
+    # url = 'https://127.0.0.1/op.html'
     url = 'https://wap.kukudm.com/comiclist/4/'
+    '''
 
-    if len(sys.argv) > 1 and int(sys.argv[1]) == 1:
-        downloadflag = 1
-    else:
+    site = 'http://1pc570gfrd9z.ihhmh.com'
+    imgsite = 'http://tu.ihhmh.com/'
+    headers ={ 'User-Agent': getRandomUserAgent() }
+    url = 'http://1pc570gfrd9z.ihhmh.com/comiclist/4'
+
+    if len(sys.argv) == 1:
+        chapter_cout = 1
         downloadflag = 0
-    getChapterLists(url,headers,downloadflag)
+    elif len(sys.argv) == 2:
+        chapter_cout = int(sys.argv[1])
+        downloadflag = 0
+    elif len(sys.argv) == 3:
+        chapter_cout = int(sys.argv[1])
+        downloadflag = 1
+
+    getChapterLists(url,headers,chapter_cout,downloadflag)
 
 
